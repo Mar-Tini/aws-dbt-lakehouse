@@ -1,0 +1,9 @@
+pandas
+numpy
+
+jupyter
+
+boto3
+fsspec
+s3fs 
+
