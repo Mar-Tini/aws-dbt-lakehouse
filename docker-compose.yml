@@ -1,3 +1,4 @@
+
 services:
   localstack:
     image: localstack/localstack:3.8
@@ -12,6 +13,9 @@ services:
     volumes:
       - localstack:/var/lib/localstack
       - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - app_network
 
   python-app:
     image: python:3.11-slim
@@ -32,7 +36,70 @@ services:
 
     depends_on:
       - localstack
+    
+    networks:
+      - app_network
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+
+    env_file:
+      - .env
+
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "${DB_PORT}:5432"
+
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - app_network
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.9.latest
+    container_name: dbt_container
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./dbt:/usr/app
+
+    working_dir: /usr/app
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    tty: true
+
+    entrypoint: ["/bin/bash", "-c"]
+
+    command:
+      - "tail -f /dev/null"
+
+
+    networks:
+      - app_network
 
 volumes:
+  postgres_db:
   localstack:
   pip_cache:
+
+
+
+networks:
+  app_network:
+    driver: bridge
