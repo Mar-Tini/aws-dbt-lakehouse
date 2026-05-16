@@ -21,7 +21,7 @@ local_file = Path(os.getenv(
     "./data/processed/data_clean.csv"
 ))
 
-# ✅ créer le dossier parent
+# Ensure the local directory exists
 local_file.parent.mkdir(parents=True, exist_ok=True)
 
 print(f"Downloading s3://{bucket}/{key}")

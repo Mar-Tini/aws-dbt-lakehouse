@@ -8,4 +8,5 @@ model-paths: ["models"]
 
 models:
   ecommerce_dbt:
+    +schema: analytics
     +materialized: table

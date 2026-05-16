@@ -66,22 +66,25 @@ services:
 
     networks:
       - app_network
+
   dbt:
     image: ghcr.io/dbt-labs/dbt-postgres:1.9.latest
-    container_name: dbt_container
+    container_name: dbt
 
     env_file:
       - .env
 
     volumes:
-      - ./dbt:/usr/app
+      - ./dbt:/usr/app/dbt
 
-    working_dir: /usr/app
+    working_dir: /usr/app/dbt
 
     depends_on:
       postgres:
         condition: service_healthy
-
+    environment:
+        DBT_PROFILES_DIR: /usr/app/dbt   
+        DBT_PASSWORD: postgres
     tty: true
 
     entrypoint: ["/bin/bash", "-c"]
