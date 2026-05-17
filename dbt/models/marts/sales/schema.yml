@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: fct_sales
+
+    columns:
+      - name: order_date
+        tests:
+          - not_null
+
+      - name: total_orders
+        tests:
+          - not_null
+
+      - name: total_revenue
+        tests:
+          - not_null
