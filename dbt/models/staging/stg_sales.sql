@@ -1,12 +1,14 @@
 SELECT
     invoice_no,
     stock_code,
-    quantity,
+    CAST(quantity AS INTEGER) AS quantity,
     invoice_date,
-    unit_price,
+    CAST(unit_price AS NUMERIC) AS unit_price,
     country,
     quantity * unit_price AS revenue
-FROM raw_orders
+
+FROM {{ source('ecommerce', 'raw_orders') }}
+
 WHERE quantity IS NOT NULL
   AND unit_price IS NOT NULL
   AND quantity > 0
