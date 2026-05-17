@@ -71,6 +71,9 @@ services:
     image: ghcr.io/dbt-labs/dbt-postgres:1.9.latest
     container_name: dbt
 
+    ports:
+      - "8080:8080"
+      
     env_file:
       - .env
 
